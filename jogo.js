@@ -1,5 +1,11 @@
+//Moonlander. Um jogo de alunissagem
+//Bárbara Santana Zotto (https://github.com/Barbarazotto)
+//28/03/2025
+//Versão 0.1.0
+
 /** @type {HTMLCanvasElement} */
 
+//Seção de Moelagem de dados
 let canvas = document.querySelector("#jogo");
 let contexto = canvas.getContext("2d");
 
@@ -25,12 +31,13 @@ let moduloLunar = {
     angulo: 0,
     largura: 20,
     altura: 20,
-    cor: "black",
+    cor: "ligthgray",
     motorLigado: false,
     velocidade: {
         x: 0,
         y: 0,
-    }
+    },
+    combustivel: 1000
 }
 
 function desenharModoLunar(){
@@ -42,6 +49,7 @@ function desenharModoLunar(){
     contexto.fillStyle = moduloLunar.cor
     contexto.fill();
     contexto.closePath();
+    
     if(moduloLunar.motorLigado){
         desenharChama();
     }
@@ -59,31 +67,38 @@ function desenharChama(){
     contexto.fill();
 }
 
+function mostrarVelocidade(){
+    contexto.font = "bold 18px Arial";
+    contexto.textAlign = "center"
+    contexto.textBaseline = "middle"
+    contexto.fillStyle = "lightgray"
+    let velocidade = `Velocidade: ${(10 * moduloLunar.velocidade.y).toFixed(2)}`
+    contexto.fillText(velocidade, 100, 60);
+}
 
-
-
-let x = 100;
+function mostrarCombustivel(){
+    contexto.font = "bold 18px Arial";
+    contexto.textAlign = "center"
+    contexto.textBaseline = "middle"
+    contexto.fillStyle = "lightgray"
+    let combustivel = `Combustivel: ${(moduloLunar.combustivel.y).toFixed(0)}`
+    contexto.fillText(combustivel, 100, 80);
+}
 
 function desenhar(){
     //limpar a tela
     contexto.clearRect(0, 0, canvas.width, canvas.height);
-
-    contexto.save() //salvando contexto
-    contexto.translate(canvas.width / 2, canvas.height / 2 );
-    contexto.beginPath();
-    // contexto.arc(x, 100, 25, 0, 2 * Math.PI);
-    contexto.rotate(Math.PI/4);
-    contexto.rect(x, 100, 25, 10);
-    contexto.fillStyle = "black";
-    contexto.fill();
-    contexto.restore(); //restaura o contexto anterior 
-
-    x = x + 1;
+    //Esta função atualiza a posição do módulo lunar em função de gravidade
     atracaoGravitacional();
+    mostrarVelocidade();
+    mostrarCombustivel();
     desenharModoLunar();
+    //Esta função repete a execução da função a cada quadro
     requestAnimationFrame(desenhar);
+    
 }
 
+    //Seção de controle
 document.addEventListener("keydown", teclaPressionada);
 function teclaPressionada(evento){
     if(evento.keyCode == 38){
@@ -102,7 +117,7 @@ function atracaoGravitacional(){
     moduloLunar.posicao.x += moduloLunar.velocidade.x;
     moduloLunar.posicao.y += moduloLunar.velocidade.y;
     if(moduloLunar.motorLigado){
-        moduloLunar.velocidade.y += 0.2;
+        moduloLunar.velocidade.y -= 0.2;
     }
     moduloLunar.velocidade.y += gravidade;
 }
